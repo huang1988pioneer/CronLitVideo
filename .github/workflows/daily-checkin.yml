@@ -13,6 +13,44 @@ jobs:
   checkin:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        account:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+          - 11
+          - 12
+          - 13
+          - 14
+          - 15
+          - 16
+          - 17
+          - 18
+          - 19
+          - 20
+          - 21
+          - 22
+          - 23
+          - 24
+          - 25
+          - 26
+          - 27
+          - 28
+          - 29
+          - 30
+          - 31
+          - 32
+          - 33
 
     steps:
       - name: Checkout
@@ -31,7 +69,8 @@ jobs:
 
       - name: Run daily check-in
         env:
-          LITMEDIA_STORAGE_STATE_BASE64: ${{ secrets.LITMEDIA_STORAGE_STATE_BASE64 }}
+          LITMEDIA_ACCOUNT_INDEX: ${{ matrix.account }}
+          LITMEDIA_STORAGE_STATE_BASE64: ${{ secrets[format('LITMEDIA_STORAGE_STATE_BASE64_{0}', matrix.account)] }}
           LITMEDIA_URL: ${{ vars.LITMEDIA_URL }}
         run: npm run checkin
 
@@ -39,6 +78,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: litmedia-checkin-failure
+          name: litmedia-checkin-failure-${{ matrix.account }}
           path: test-results/checkin-failure.png
           if-no-files-found: ignore

@@ -4,9 +4,9 @@ LitMedia daily check-in helper powered by Playwright and GitHub Actions.
 
 ## How it works
 
-1. Run an interactive login locally and save Playwright storage state.
-2. Store that storage state as a GitHub Secret.
-3. GitHub Actions opens LitMedia every day and clicks the daily check-in button when it is available.
+1. Run an interactive login locally and save Playwright storage state for each account.
+2. Store each storage state as a numbered GitHub Secret.
+3. GitHub Actions opens LitMedia for each configured account every day and clicks the daily check-in button when it is available.
 
 This does not bypass CAPTCHA, human verification, or account risk checks. If LitMedia requires a fresh login or verification challenge, refresh the saved storage state locally and update the secret.
 
@@ -50,13 +50,23 @@ Convert the storage state file to base64:
 [Convert]::ToBase64String([IO.File]::ReadAllBytes("auth/litmedia.storageState.json")) | Set-Clipboard
 ```
 
-Create this repository secret:
+Create numbered repository secrets from `1` to `33`:
 
 ```text
-LITMEDIA_STORAGE_STATE_BASE64
+LITMEDIA_STORAGE_STATE_BASE64_1
+LITMEDIA_STORAGE_STATE_BASE64_2
+...
+LITMEDIA_STORAGE_STATE_BASE64_33
 ```
 
-Paste the copied base64 value into that secret.
+Paste each account's copied base64 value into its matching secret.
+
+For multiple accounts, repeat this flow:
+
+1. Run `cmd /c npm run auth`.
+2. Log in as the next LitMedia account.
+3. Convert `auth/litmedia.storageState.json` to base64.
+4. Save it as `LITMEDIA_STORAGE_STATE_BASE64_<account-number>`.
 
 Optional repository variable:
 
@@ -64,10 +74,10 @@ Optional repository variable:
 LITMEDIA_URL=https://litmedia.ai/tw/app/litvideo/ai-image/
 ```
 
-The workflow runs every day at `05:05` and `17:05` Asia/Taipei time, and can also be started manually from the GitHub Actions tab.
+The workflow runs every day at `05:05` and `17:05` Asia/Taipei time, and can also be started manually from the GitHub Actions tab. It runs accounts `1` through `33` with `max-parallel: 4`.
 
 ## Troubleshooting
 
-- If the action says the storage state is missing, confirm `LITMEDIA_STORAGE_STATE_BASE64` exists in GitHub Secrets.
+- If the action says the storage state is missing, confirm the matching numbered secret exists in GitHub Secrets, such as `LITMEDIA_STORAGE_STATE_BASE64_7`.
 - If login expired, rerun `npm run auth`, regenerate the base64 value, and update the secret.
 - If the page layout changes, check the uploaded `litmedia-checkin-failure` screenshot artifact from the failed workflow run.

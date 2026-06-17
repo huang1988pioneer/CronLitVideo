@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const targetUrl = process.env.LITMEDIA_URL ?? 'https://litmedia.ai/tw/app/litvideo/ai-image/';
+const accountIndex = process.env.LITMEDIA_ACCOUNT_INDEX;
 const storageStatePath = await resolveStorageStatePath();
 const headless = process.env.HEADLESS !== 'false';
 
@@ -17,6 +18,10 @@ const context = await browser.newContext({
 const page = await context.newPage();
 
 try {
+  if (accountIndex) {
+    console.log(`Running LitMedia check-in for account ${accountIndex}`);
+  }
+
   console.log(`Opening ${targetUrl}`);
   await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 60_000 });
   await page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
@@ -50,9 +55,12 @@ async function resolveStorageStatePath() {
 
   const path = process.env.LITMEDIA_STORAGE_STATE_PATH ?? 'auth/litmedia.storageState.json';
   if (!existsSync(path)) {
+    const secretName = accountIndex
+      ? `LITMEDIA_STORAGE_STATE_BASE64_${accountIndex}`
+      : 'LITMEDIA_STORAGE_STATE_BASE64';
     throw new Error(
       `Missing storage state file: ${path}\n` +
-        'Run `npm run auth` locally first, or set LITMEDIA_STORAGE_STATE_BASE64 in GitHub Secrets.'
+        `Run \`npm run auth\` locally first, or set ${secretName} in GitHub Secrets.`
     );
   }
 
