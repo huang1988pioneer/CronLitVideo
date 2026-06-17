@@ -64,10 +64,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check account secret
+        id: account_secret
+        env:
+          LITMEDIA_STORAGE_STATE_BASE64: ${{ secrets[format('LITMEDIA_STORAGE_STATE_BASE64_{0}', matrix.account)] }}
+        run: |
+          if [ -n "$LITMEDIA_STORAGE_STATE_BASE64" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping account ${{ matrix.account }}: LITMEDIA_STORAGE_STATE_BASE64_${{ matrix.account }} is not configured."
+          fi
+
       - name: Install Playwright browser
+        if: steps.account_secret.outputs.configured == 'true'
         run: npx playwright install --with-deps chromium
 
       - name: Run daily check-in
+        if: steps.account_secret.outputs.configured == 'true'
         env:
           LITMEDIA_ACCOUNT_INDEX: ${{ matrix.account }}
           LITMEDIA_STORAGE_STATE_BASE64: ${{ secrets[format('LITMEDIA_STORAGE_STATE_BASE64_{0}', matrix.account)] }}
