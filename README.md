@@ -86,11 +86,11 @@ The workflow runs every day at `05:05` and `17:05` Asia/Taipei time, and can als
 
 The design intentionally prioritizes account isolation over opening many browser processes. Each account gets its own Playwright browser context, so cookies and localStorage do not mix, while the accounts run sequentially instead of in bulk parallel jobs.
 
-Configured accounts wait a random `15` to `45` seconds between runs by default. You can override this with repository variables:
+Configured accounts wait a random `5` to `15` seconds between runs by default. You can override this with repository variables:
 
 ```text
-LITMEDIA_DELAY_MIN_MS=15000
-LITMEDIA_DELAY_MAX_MS=45000
+LITMEDIA_DELAY_MIN_MS=5000
+LITMEDIA_DELAY_MAX_MS=15000
 ```
 
 ## Troubleshooting

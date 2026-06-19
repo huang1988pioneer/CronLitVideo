@@ -37,8 +37,8 @@ const accounts = [
   [33, 'account-33']
 ];
 
-const delayMinMs = parseDelay(process.env.LITMEDIA_DELAY_MIN_MS, 15_000);
-const delayMaxMs = parseDelay(process.env.LITMEDIA_DELAY_MAX_MS, 45_000);
+const delayMinMs = parseDelay(process.env.LITMEDIA_DELAY_MIN_MS, 5_000);
+const delayMaxMs = parseDelay(process.env.LITMEDIA_DELAY_MAX_MS, 15_000);
 const targetUrl = process.env.LITMEDIA_URL?.trim() || defaultTargetUrl;
 const configuredAccounts = accounts
   .map(([index, label]) => ({
@@ -101,7 +101,7 @@ if (failed > 0) {
 }
 
 function randomDelay(min, max) {
-  const safeMin = Number.isFinite(min) && min >= 0 ? min : 15_000;
+  const safeMin = Number.isFinite(min) && min >= 0 ? min : 5_000;
   const safeMax = Number.isFinite(max) && max >= safeMin ? max : safeMin;
   return Math.floor(safeMin + Math.random() * (safeMax - safeMin + 1));
 }
