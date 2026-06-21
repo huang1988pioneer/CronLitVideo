@@ -30,6 +30,18 @@ cmd /c npm run auth
 auth/litmedia.storageState.json
 ```
 
+For numbered multi-account setup, pass the account number so each login state is saved to a separate file:
+
+```powershell
+cmd /c npm run auth -- 1
+```
+
+That saves account `1` to:
+
+```text
+auth/account-1.storageState.json
+```
+
 Test the check-in locally:
 
 ```powershell
@@ -56,7 +68,7 @@ Or use the helper command to validate the JSON and copy the GitHub Secret value 
 cmd /c npm run secret -- 1
 ```
 
-The number maps to the secret name. For example, `1` copies the value for `LITMEDIA_STORAGE_STATE_BASE64_1`; `33` copies the value for `LITMEDIA_STORAGE_STATE_BASE64_33`.
+The number maps to both the local storage file and the secret name. For example, `1` reads `auth/account-1.storageState.json` and copies the value for `LITMEDIA_STORAGE_STATE_BASE64_1`; `33` reads `auth/account-33.storageState.json` and copies the value for `LITMEDIA_STORAGE_STATE_BASE64_33`.
 
 Create numbered repository secrets from `1` to `33`:
 
@@ -71,10 +83,20 @@ Paste each account's copied base64 value into its matching secret.
 
 For multiple accounts, repeat this flow:
 
-1. Run `cmd /c npm run auth`.
+1. Run `cmd /c npm run auth -- <account-number>`.
 2. Log in as the next LitMedia account.
 3. Run `cmd /c npm run secret -- <account-number>`.
 4. Save it as `LITMEDIA_STORAGE_STATE_BASE64_<account-number>`.
+
+Example:
+
+```powershell
+cmd /c npm run auth -- 1
+cmd /c npm run secret -- 1
+
+cmd /c npm run auth -- 2
+cmd /c npm run secret -- 2
+```
 
 Optional repository variable:
 

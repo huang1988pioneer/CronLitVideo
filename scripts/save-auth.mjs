@@ -4,7 +4,8 @@ import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 
 const targetUrl = process.env.LITMEDIA_URL ?? 'https://litmedia.ai/tw/app/litvideo/ai-image/';
-const statePath = process.env.LITMEDIA_STORAGE_STATE_PATH ?? 'auth/litmedia.storageState.json';
+const accountIndex = process.argv[2]?.trim();
+const statePath = process.env.LITMEDIA_STORAGE_STATE_PATH ?? defaultStatePath(accountIndex);
 
 await mkdir('auth', { recursive: true });
 
@@ -33,3 +34,7 @@ await context.storageState({ path: statePath });
 console.log(`Saved Playwright storage state to ${statePath}`);
 
 await browser.close();
+
+function defaultStatePath(index) {
+  return index ? `auth/account-${index}.storageState.json` : 'auth/litmedia.storageState.json';
+}

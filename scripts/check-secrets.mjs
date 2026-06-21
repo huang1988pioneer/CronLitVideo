@@ -2,6 +2,7 @@
 // Run this in GitHub Actions to see which secrets are set
 
 const accounts = Array.from({ length: 33 }, (_, i) => i + 1);
+const previewLength = 33;
 
 console.log('Checking configured accounts...\n');
 
@@ -10,9 +11,9 @@ for (const account of accounts) {
   const secretValue = process.env[secretName];
   
   if (secretValue) {
-    // Only show first and last 10 characters to identify uniqueness
-    const preview = secretValue.length > 20 
-      ? `${secretValue.slice(0, 10)}...${secretValue.slice(-10)} (length: ${secretValue.length})`
+    // Only show the edges to help identify uniqueness without printing the full secret.
+    const preview = secretValue.length > previewLength * 2 
+      ? `${secretValue.slice(0, previewLength)}...${secretValue.slice(-previewLength)} (length: ${secretValue.length})`
       : `(length: ${secretValue.length})`;
     
     console.log(`✓ Account ${account}: ${secretName} is configured ${preview}`);
@@ -30,7 +31,7 @@ for (const account of accounts) {
   const secretValue = process.env[secretName];
   
   if (secretValue) {
-    const key = `${secretValue.length}-${secretValue.slice(0, 10)}-${secretValue.slice(-10)}`;
+    const key = `${secretValue.length}-${secretValue.slice(0, previewLength)}-${secretValue.slice(-previewLength)}`;
     if (!configured[key]) {
       configured[key] = [];
     }

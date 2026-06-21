@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 
 const accountIndex = process.argv[2];
-const statePath = process.argv[3] ?? process.env.LITMEDIA_STORAGE_STATE_PATH ?? 'auth/litmedia.storageState.json';
+const statePath = process.argv[3] ?? process.env.LITMEDIA_STORAGE_STATE_PATH ?? defaultStatePath(accountIndex);
 const secretName = accountIndex
   ? `LITMEDIA_STORAGE_STATE_BASE64_${accountIndex}`
   : 'LITMEDIA_STORAGE_STATE_BASE64';
@@ -31,6 +31,10 @@ function validateStorageState(value, path) {
   if (!Array.isArray(parsed.cookies) || !Array.isArray(parsed.origins)) {
     throw new Error(`${path} does not look like a Playwright storage state file.`);
   }
+}
+
+function defaultStatePath(index) {
+  return index ? `auth/account-${index}.storageState.json` : 'auth/litmedia.storageState.json';
 }
 
 async function copyToClipboard(value) {
